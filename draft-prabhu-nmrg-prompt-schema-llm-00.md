@@ -107,6 +107,8 @@ The interfaces between the framework components are logical. Raw network input i
 
 These interfaces do not require a specific transport protocol or serialization format. Implementations may use JSON, YANG-derived structures, or other structured encodings for the normalized representation, while the LLM-facing output may be provided as prompt text or structured prompt context. This document does not define a wire protocol for these interfaces.
 
+While this document focuses on normalizing multi-vendor network management inputs for consumption by a central LLM, the normalization function could also be applicable to interactions between an AI agent and an NMS, or between management agents using heterogeneous representations. Such uses are outside the primary scope of this document but may be considered in future work on agent-based network management.
+
 Input Classifier
 ================
 
