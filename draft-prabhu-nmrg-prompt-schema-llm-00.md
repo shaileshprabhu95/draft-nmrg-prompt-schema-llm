@@ -101,6 +101,7 @@ The framework is a logical system positioned between heterogeneous multi-vendor 
 {: #fig-arch title="Reference architecture"}
 
 Architectural Placement and Interfaces {#architectural-placement}
+------------------------------------------------------------------
 
 The framework is logically positioned within, or adjacent to, a Network Management System (NMS), controller, or orchestrator, between network data acquisition functions and the central LLM. Existing mechanisms may continue to collect CLI output, telemetry, configuration, alarms, or vendor API responses; the framework does not require changes to the network elements or the mechanisms used to acquire such data.
 
@@ -177,6 +178,7 @@ Structurers
 After classification, the message is delivered to exactly one of three Structurers. Each Structurer interprets inputs that the Input Classifier has already labeled with the matching category. Because vendors represent performance, configuration, and response text in widely varying forms, each Structurer typically employs an SLM for adaptability, extraction, normalization, and confidence assignment. Structured records are then passed to the Prompt Schema Generator.
 
 Semantic Normalization {#semantic-normalization}
+------------------------------------------------
 
 A Structurer may need to reconcile vendor-specific terms, field names, and representations that refer to the same network management concept. For example, different vendors may represent the same receive-error metric as "rx_errors", "input errors", or "receive_errors". The Structurer maps such representations to a common representation before passing the structured record to the Prompt Schema Generator.
 
