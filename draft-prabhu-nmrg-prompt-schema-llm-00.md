@@ -177,6 +177,14 @@ Structurers
 
 After classification, the message is delivered to exactly one of three Structurers. Each Structurer interprets inputs that the Input Classifier has already labeled with the matching category. Because vendors represent performance, configuration, and response text in widely varying forms, each Structurer typically employs an SLM for adaptability, extraction, normalization, and confidence assignment. Structured records are then passed to the Prompt Schema Generator.
 
+Semantic Normalization {#semantic-normalization}
+
+A Structurer may need to reconcile vendor-specific terms, field names, and representations that refer to the same network management concept. For example, different vendors may represent the same receive-error metric as "rx_errors", "input errors", or "receive_errors". The Structurer maps such representations to a common representation before passing the structured record to the Prompt Schema Generator.
+
+Implementations may perform this mapping using explicit mapping rules or tables, controlled vocabularies or glossaries, semantic models or ontologies, knowledge graphs, SLM-assisted semantic matching, or a combination of these techniques. The choice of mechanism is implementation specific. SLM-assisted mappings may additionally use confidence information and human review, as described elsewhere in this document, when the mapping is uncertain.
+
+Determining which normalization techniques, or combinations of techniques, are most suitable for heterogeneous network management inputs is an area for further research. Relevant considerations include mapping accuracy, semantic preservation, coverage of previously unseen representations, explainability, extensibility, and operational cost.
+
 Performance Structurer
 ----------------------
 
