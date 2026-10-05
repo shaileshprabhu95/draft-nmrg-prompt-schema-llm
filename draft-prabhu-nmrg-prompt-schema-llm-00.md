@@ -41,7 +41,7 @@ This document describes an architectural framework for standardizing multi-vendo
 
 The framework is complementary to broader work on AI-assisted and agent-based network management. While such work may address agent interaction, orchestration, tool access, or operational workflows, this document focuses specifically on normalizing heterogeneous network management inputs before they are consumed by an LLM. The normalization function may therefore serve as an input-processing building block within broader AI-assisted network management architectures.
 
-The key components are the Input Classifier, the three Structurers, the Prompt Schema Generator, and the central LLM. Together, they enable multi-vendor inputs to be categorized, structured, normalized via a schema, and presented to the central LLM in a consistent form.
+The key components are the Input Classifier, the three Structurers, the Prompt Schema Generator, and the central LLM. Together, they enable multi-vendor inputs to be categorized, structured, normalized, aligned with a vendor-agnostic schema, and presented to the central LLM in a consistent form.
 
 Terminology
 ==========
@@ -50,7 +50,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 - LLM (Large Language Model): A machine learning model used for natural language understanding and generation. In this document, the LLM is the consumer of standardized network management inputs for tasks such as troubleshooting, intent translation, and automation.
 - Prompt: Input (or input context) supplied to an LLM for processing. In LLM-assisted network management, a prompt typically includes network-derived data such as CLI output, configuration snippets, telemetry, or alarms, often after normalization via a schema.
-- Schema: A formal, vendor-agnostic description of the structure, types, and semantics of a class of network management inputs. A schema allows multi-vendor data to be normalized to a common shape before being presented to the LLM.
+- Schema: A formal, vendor-agnostic description of the structure, types, and semantics of a class of network management inputs. A schema provides a common shape to which normalized multi-vendor data can be aligned before being presented to the LLM.
 - Input Classifier: A component that determines the nature of incoming messages from multi-vendor network elements and assigns each input to one of three categories: performance, configuration, or response, so that the corresponding Structurer can process it. It uses a hybrid rule-based stage followed by SLM-based classification when the rule-based stage is inconclusive.
 - Structurer: A component that receives input already labeled by the Input Classifier with one category and produces a structured, normalized representation for the Prompt Schema Generator. This document defines three structurers: Performance Structurer, Configuration Structurer, and Response Structurer.
 - Small Language Model (SLM): A compact language model used inside the Input Classifier (for semantic classification when rules fail) and inside each Structurer (for extraction, normalization, and confidence). SLMs MAY be fine-tuned on curated multi-vendor network messages, telemetry, configuration text, and operational responses.
@@ -71,11 +71,10 @@ The framework is a logical system positioned between heterogeneous multi-vendor 
                +-------------+-------------+
                              ^
                              | schema + prompts
-                   +-------------------+   +---------------------+
-                   |   Prompt Schema   |   | Auxiliary / Control |
-                   |     Generator     |<--+ (e.g., schema       |
-                   |                   |   |  generation policy) |
-                   +---------+---------+   +---------------------+
+                   +-------------------+
+                   |   Prompt Schema   |
+                   |     Generator     |
+                   +---------+---------+
                              ^
                              | structured output
            +-----------------+-----------------+
@@ -194,7 +193,7 @@ Typical processing steps include:
 
 1. Input reception: The structurer receives performance-labeled input (e.g., a line such as "Traffic load = 75%").
 2. Value extraction: The SLM extracts numeric and unit information (e.g., isolating "75" and "%"). Heterogeneous forms (e.g., ratios such as "8/10") MAY be converted to a comparable representation (e.g., 80%).
-3. Normalization: Values are normalized to a standard scale for downstream use (commonly a percentage), so that fractions, raw throughput figures, and percentages align to a uniform representation.
+3. Normalization: Values and units are normalized to a consistent representation appropriate to the metric. For example, equivalent ratios and percentages may be converted to a common scale, while throughput or latency values may be converted to consistent units.
 4. Confidence scoring: The SLM MAY assign high (well-recognized pattern), medium (ambiguous; flag for review), or low (unrecognized pattern). For low confidence, implementations MAY attach the raw network element input when sending output to the Prompt Schema Generator for human-in-the-loop review; feedback from that review MAY later be used to retrain or refine the Input Classifier and Structurers.
 5. Performance structuring: The structurer emits a structured representation to the Prompt Schema Generator in an implementation-defined format consistent with the chosen schema.
 
@@ -235,10 +234,10 @@ The Prompt Schema Generator receives structured output from the active Structure
 Functions of the Prompt Schema Generator in this context include:
 
 - Creating or selecting schemas that define structure, fields, types, and semantics of network management inputs in a form suitable for the central LLM, with schema choice driven by the classification and structurer output.
-- Enabling mapping from vendor-specific representations to a single schema so the central LLM receives consistent input regardless of source.
+- Aligning normalized structured representations with a selected vendor-agnostic schema so the central LLM receives consistent input regardless of source.
 - Feeding the schema and resulting prompts (or prompt context) to the central LLM for tasks such as troubleshooting, intent translation, and automation.
 
-Implementations may use static schema definitions (e.g., based on common network management information models), vendor-specific mapping tables, or dynamically updated schemas. The output of the Prompt Schema Generator is consumed by the central LLM; implementations may also use it for normalization logic that maps structured records into schema-conformant prompts before LLM invocation.
+Implementations may use static schema definitions (e.g., based on common network management information models) or dynamically updated schemas. The Prompt Schema Generator aligns the normalized structured records produced by the Structurers with the selected schema and constructs schema-conformant prompts or prompt context for LLM invocation.
 
 Output and Downstream Use
 =========================
