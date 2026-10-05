@@ -57,7 +57,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 Architecture Overview
 ====================
 
-The framework is a logical system that interfaces with the central (existing) LLM that manages the network; it sits between multi-vendor network data sources and that central LLM. Raw inputs (e.g., CLI output, configuration, telemetry, alarms, or API responses) enter the Input Classifier. The classifier routes each message to the Performance Structurer, Configuration Structurer, or Response Structurer. The active Structurer's output is fed to the Prompt Schema Generator, which produces schema-aligned prompts for the central LLM.
+The framework is a logical system positioned between heterogeneous multi-vendor network management data sources and a central LLM used for AI-assisted network management. Raw inputs (e.g., CLI output, configuration, telemetry, alarms, or API responses) enter the Input Classifier. The classifier routes each message to the Performance Structurer, Configuration Structurer, or Response Structurer. The active Structurer's output is fed to the Prompt Schema Generator, which produces schema-aligned prompts or prompt context for the central LLM. The architectural placement of these functions and the logical interfaces between them are described in {{architectural-placement}}.
 
 ~~~~~~~~~~
     +---------------------------+
@@ -100,6 +100,14 @@ The framework is a logical system that interfaces with the central (existing) LL
     +---------------------------+
 ~~~~~~~~~~
 {: #fig-arch title="Reference architecture"}
+
+Architectural Placement and Interfaces {#architectural-placement}
+
+The framework is logically positioned within, or adjacent to, a Network Management System (NMS), controller, or orchestrator, between network data acquisition functions and the central LLM. Existing mechanisms may continue to collect CLI output, telemetry, configuration, alarms, or vendor API responses; the framework does not require changes to the network elements or the mechanisms used to acquire such data.
+
+The interfaces between the framework components are logical. Raw network input is provided to the Input Classifier, which assigns an input category and forwards the input to the corresponding Structurer. The selected Structurer produces a normalized structured representation for the Prompt Schema Generator, together with metadata such as the assigned category and confidence information; the original input may also be retained for traceability in low-confidence cases. The Prompt Schema Generator uses the normalized representation to produce schema-aligned prompt content for the central LLM.
+
+These interfaces do not require a specific transport protocol or serialization format. Implementations may use JSON, YANG-derived structures, or other structured encodings for the normalized representation, while the LLM-facing output may be provided as prompt text or structured prompt context. This document does not define a wire protocol for these interfaces.
 
 Input Classifier
 ================
