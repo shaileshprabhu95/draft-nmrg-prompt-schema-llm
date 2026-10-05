@@ -3,11 +3,11 @@ coding: utf-8
 
 title: "Framework for Normalizing Multi-Vendor Network Inputs for LLM-Assisted Network Management"
 abbrev: "Normalizing MV Inputs for LLM NM"
-docname: draft-prabhu-nmrg-prompt-schema-llm-00
+docname: draft-prabhu-nmrg-prompt-schema-llm-01
 category: info
 ipr: trust200902
 submissiontype: IETF
-date: 2026-03-31
+date: 2026-10-04
 
 stand_alone: yes
 pi: [toc, sortrefs, symrefs, comments]
