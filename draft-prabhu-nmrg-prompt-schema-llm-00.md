@@ -60,44 +60,42 @@ Architecture Overview
 The framework is a logical system positioned between heterogeneous multi-vendor network management data sources and a central LLM used for AI-assisted network management. Raw inputs (e.g., CLI output, configuration, telemetry, alarms, or API responses) enter the Input Classifier. The classifier routes each message to the Performance Structurer, Configuration Structurer, or Response Structurer. The active Structurer's output is fed to the Prompt Schema Generator, which produces schema-aligned prompts or prompt context for the central LLM. The architectural placement of these functions and the logical interfaces between them are described in {{architectural-placement}}.
 
 ~~~~~~~~~~
-    +---------------------------+
-    |   Central LLM             |
-    |   (network management:    |
-    |    troubleshooting,        |
-    |    intent translation,     |
-    |    automation)             |
-    +-------------+-------------+
-                  ^
-                  |  schema + prompts
-    +--------+---------+     +-----------------------+
-    |  Prompt Schema   |<----+  Auxiliary / Control   |
-    |   Generator      |     |  (e.g., schema        |
-    |                  |     |   generation policy)   |
-    +------------------+     +-----------------------+
-                  ^
-                  |  structured output
-         +--------+---------+---------+
-         |        |         |         |
-    +----+---+ +---+----+ +--+-----+
-    |Performance|Config. |Response|
-    |Structurer |Struct. |Struct. |
-    +----+---+ +---+----+ +--+-----+
-         ^        ^         ^
-         |        |         |
-         +----+---+---------+
-                  |
-         +--------v--------+
-         |  Input          |
-         |  Classifier     |
-         |  (rules + SLM)  |
-         +--------+--------+
-                  ^
-                  |
-    +-------------+-------------+
-    | Multi-Vendor Network Input |
-    | (CLI, config, telemetry,   |
-    |  alarms, vendor APIs)     |
-    +---------------------------+
+               +---------------------------+
+               |        Central LLM        |
+               |   (network management:    |
+               |    troubleshooting,       |
+               |    intent translation,    |
+               |    automation)            |
+               +-------------+-------------+
+                             ^
+                             | schema + prompts
+                   +-------------------+   +---------------------+
+                   |   Prompt Schema   |   | Auxiliary / Control |
+                   |     Generator     |<--+ (e.g., schema       |
+                   |                   |   |  generation policy) |
+                   +---------+---------+   +---------------------+
+                             ^
+                             | structured output
+           +-----------------+-----------------+
+           |                 |                 |
+   +-------+-------+ +-------+-------+ +-------+-------+
+   |  Performance  | | Configuration | |   Response    |
+   |  Structurer   | |  Structurer   | |  Structurer   |
+   +-------+-------+ +-------+-------+ +-------+-------+
+           ^                 ^                 ^
+           +-----------------+-----------------+
+                             |
+                   +---------+---------+
+                   |       Input       |
+                   |    Classifier     |
+                   |   (rules + SLM)   |
+                   +---------+---------+
+                             ^
+                             |
+   +-------------------------+-------------------------+
+   |            Multi-Vendor Network Input             |
+   |   (CLI, config, telemetry, alarms, vendor APIs)   |
+   +---------------------------------------------------+
 ~~~~~~~~~~
 {: #fig-arch title="Reference architecture"}
 
